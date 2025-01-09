@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    {% load static %} <!-- Load staticfiles -->
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('{% static 'images/backgr2.png' %}') no-repeat center center;
+            background-size: cover;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .actions {
+            text-align: center;
+        }
+        .actions a {
+            text-decoration: none;
+            color: #ffffff;
+            background: #007bff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .actions a:hover {
+            background: #0056b3;
+        }
+        .total-price {
+            text-align: right;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .checkout-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 12px 0;
+            background: #28a745;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .checkout-btn:hover {
+            background: #218838;
+        }
+        .empty-cart {
+            text-align: center;
+            color: #666;
+            margin: 40px 0;
+        }
+        th, td {
+            text-align: center;
+            padding: 10px;
+            vertical-align: middle;
+        }
+        td.actions {
+            text-align: center;
+            width: 100px; /* Adjust width as necessary */
+        }
+        .remove-button {
+            padding: 5px 10px;
+            font-size: 14px;
+            background-color: #ff4d4d; /* Light red */
+            color: white;             /* Button text color */
+            border: none;             /* Remove default border */
+            padding: 10px 15px;       /* Adjust button padding */
+            border-radius: 5px;       /* Rounded corners */
+            cursor: pointer;          /* Pointer cursor on hover */
+        }
+        .remove-button:hover {
+            background-color: #cc0000; /* Darker red on hover */
+        }
+        .quantity-box {
+            width: 60px;          /* Set a fixed width */
+            text-align: center;   /* Center the text */
+            padding: 5px;         /* Add some padding */
+            border: 1px solid #ccc; /* Optional: Define a border */
+            border-radius: 4px;   /* Rounded corners for better visuals */
+        }
+        .price-details {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Adjust the gap between the items as needed */
+        }
+        .total-price {
+            margin: 5px 0; /* Optional: Adjust the margin between the items */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Cart</h1>
+        
+        {% if cart_items %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>₹{{ item.product.price|floatformat:2 }}</td>
+                    <td>
+                        <form method="POST" action="{% url 'core:update_cart_item' item.id %}">
+                            {% csrf_token %}
+                            <input type="number" 
+                                   name="quantity" 
+                                   value="{{ item.quantity }}" 
+                                   min="1" 
+                                   class="quantity-box" 
+                                   onchange="this.form.submit()" />
+                        </form>
+                    </td>
+                    <td>₹{{ item.subtotal|floatformat:2 }}</td>
+                    <td class="actions">
+                        <form method="POST" action="{% url 'core:remove_from_cart' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="remove-button">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <form method="POST" action="{% url 'core:apply_coupon' %}">
+            {% csrf_token %}
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <input type="text" 
+                       name="coupon_code" 
+                       placeholder="Enter coupon code" 
+                       style="padding: 10px; flex: 1; margin-right: 10px; border: 1px solid #ccc; border-radius: 4px;" />
+                <button type="submit" 
+                        style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    Apply Coupon
+                </button>
+            </div>
+            
+            {% if request.session.discount %}
+            <div class="price-details">
+                <div class="total-price">
+                    Original Total: ₹{{ total_price|floatformat:2 }}
+                </div>
+                <div class="total-price">
+                    Discount: ₹{{ request.session.discount|floatformat:2 }}
+                </div>
+                <div class="total-price">
+                    New Total: ₹{{ request.session.new_total|floatformat:2 }}
+                </div>
+            </div>
+            <p style="color: green;">Coupon applied! Discount: ₹{{ request.session.discount|floatformat:2 }}</p>
+            {% else %}
+            <div class="total-price">
+                Total: ₹{{ total_price|floatformat:2 }}
+            </div>
+            {% endif %}
+        </form>
+
+        <a href="{% url 'core:checkout' %}" class="checkout-btn">Proceed to Checkout</a>
+
+        {% else %}
+        <div class="empty-cart">
+            <p>Your cart is currently empty.</p>
+            <a href="{% url 'core:index' %}" class="checkout-btn" style="background: #007bff;">Continue Shopping</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

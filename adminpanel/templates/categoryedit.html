@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Category</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #F9E5D3;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+        }
+        h2 {
+            font-size: 24px;
+            color: #DEAD6F;
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #DEAD6F;
+            padding-bottom: 10px;
+        }
+
+        label {
+            font-size: 16px;
+            color: #333;
+            margin-top: 10px;
+            display: block;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .submit-btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #DEAD6F;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .submit-btn:hover {
+            background-color: #c09c61;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 16px;
+            color: #DEAD6F;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .back-link:hover {
+            color: #c09c61;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Edit Category</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="categoryname">Category Name:</label>
+            <input type="text" name="categoryname" id="categoryname" value="{{ category.categoryname }}" required>
+            <button type="submit" class="submit-btn">Save Changes</button>
+        </form>
+        <a href="{% url 'adminpanel:category_list' %}" class="back-link">Back to Categories</a>
+    </div>
+</body>
+</html>

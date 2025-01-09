@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    {% load static %}
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/x-icon">
+    <title>CUPCRAZE</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}" />
+
+    <!-- Inline CSS -->
+    <style>
+        /* Logo */
+        .logo {
+            height: 60px;
+            width: 350px;
+            max-height: 300px;
+            margin-left: 80px;
+        }
+
+        /* Hero Section Styles */
+        .hero_area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('{% static 'images/BBCC.jpg' %}') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            position: relative;
+        }
+
+        .hero_text {
+            text-align: center;
+            z-index: 2;
+            color: #5e1d19;
+            text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.7);
+            margin-top: 200px;
+        }
+
+        /* Glitter Effect Keyframes */
+        @keyframes glitter {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Apply Glitter Animation to Hero Heading */
+        .hero_heading {
+            font-size: 4.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+
+            /* Glitter Background */
+            background: linear-gradient(90deg, #ffffff, #ffeaa7, #ffffff, #f9f1dc);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+
+            /* Apply Animation */
+            animation: glitter 3s linear infinite, fadeIn 2s ease-in-out;
+        }
+
+        /* Apply Glitter Animation to Hero Paragraph */
+        .hero_paragraph {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+
+            /* Glitter Background */
+            background: linear-gradient(90deg, #ffffff, #ffeaa7, #ffffff, #f9f1dc);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+
+            /* Apply Animation */
+            animation: glitter 3s linear infinite, fadeIn 3s ease-in-out;
+        }
+
+        /* Fade-in Animation */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero_button {
+            padding: 0.75rem 2rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .hero_button:hover {
+            background-color: #ffc107;
+            transform: scale(1.05);
+            color: #0d0302;
+        }
+
+        /* Adjusting navbar for better alignment */
+        .navbar-nav {
+            margin-left: auto;
+            margin-right: 10px;
+        }
+
+        .user_option {
+            margin-left: 10px;
+        }
+
+        .navbar-nav li, .user_option a {
+            padding: 0 10px;
+        }
+
+        .navbar-nav .nav-item {
+            margin-right: 20px;
+        }
+
+        /* Align user options and cart to the left */
+        .navbar-nav li, .user_option a {
+            margin-left: 15px;
+        }
+
+        /* Cart Icon */
+        .cart_link {
+            font-size: 1.3rem;
+        }
+        /* Base Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f9f9f9;
+}
+
+h1, h2, h3, p {
+    margin: 0 0 1rem;
+}
+
+a {
+    text-decoration: none;
+    color: #fff;
+}
+
+/* Header Section */
+.header {
+    background: url('path-to-header-image.jpg') no-repeat center center/cover;
+    color: #fff;
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.header p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn-primary {
+    display: inline-block;
+    background-color: #007bff;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/*banner section  */
+.coffee-banner {
+    background: url('static/images/backgr4.png') no-repeat center center/cover; /* Replace with your coffee-themed image */
+    color: white;
+    text-align: center;
+    padding: 50px 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.coffee-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Adds a dark overlay for text visibility */
+    border-radius: 8px;
+    z-index: 1;
+}
+
+.banner-content {
+    position: relative;
+    z-index: 2;
+}
+
+.banner-content h1 {
+    font-size: 3rem;
+    font-family: 'Georgia', serif;
+    margin-bottom: 15px;
+    color: #ffeaa7; /* Warm coffee-inspired color */
+}
+
+.banner-content p {
+    font-size: 1.5rem;
+    margin-bottom: 25px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.banner-content .highlight {
+    color: #ffbe76; /* Coffee cream color */
+    font-weight: bold;
+}
+
+.shop-now-btn {
+    background-color: #c39e81; /* Coffee brown shade */
+    color: #2c1506;
+    padding: 12px 25px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.shop-now-btn:hover {
+    background-color: #a67c52; /* Darker coffee brown */
+    transform: scale(1.1); /* Slight zoom on hover */
+    color: #fff;
+}
+
+
+
+
+
+/* Categories Section */
+.categories-section {
+    padding: 2rem 1rem;
+    text-align: center;
+    
+}
+
+.categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.category-card {
+    background-color: rgb(190, 152, 105);
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    text-align: center;
+}
+
+.category-card:hover {
+    transform: scale(1.05);
+}
+
+.category-card h3 {
+    color: #05030341;
+}
+
+/* Featured Products Section */
+.featured-products {
+    padding: 2rem 1rem;
+    text-align: center;
+}
+
+.product-card {
+    background-color: rgb(190, 152, 105);
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.product-card img {
+    max-width: 100%;
+    border-radius: 5px;
+}
+
+.product-card h3 {
+    margin: 1rem 0;
+}
+
+.product-card p {
+    color: #666;
+}
+.featured-products-section {
+    margin: 20px 0;
+}
+
+.featured-products {
+    display: flex;              /* Makes the products appear in a row */
+    flex-wrap: wrap;            /* Allows wrapping to the next line if necessary */
+    gap: 20px;                  /* Adds space between product cards */
+    justify-content: space-between;  /* Distributes products evenly */
+}
+
+.product-card {
+    flex: 1 1 calc(25% - 20px); /* Ensures each card takes up 25% of the container width, minus the gap */
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: center;
+    background-color: #be9869;
+    border-radius: 8px;
+}
+
+.product-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.product-card h3 {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+.product-card p {
+    margin: 5px 0;
+}
+
+
+/* Footer Section */
+.footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+}
+.category-card img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+/* Footer Styling */
+.footer {
+    background-color: #333; /* Dark background for footer */
+    color: #fff; /* Light text color */
+    padding: 2rem 1rem; /* Spacing inside the footer */
+    text-align: center; /* Center align text */
+    margin-top: 3rem; /* Adds space between content and footer */
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+.footer-content {
+    max-width: 1200px; /* Restricts the width of footer content */
+    margin: 0 auto; /* Centers the footer content */
+    padding: 1rem;
+}
+
+.footer p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.footer-links a {
+    color: #fff; /* White links */
+    text-decoration: none; /* Remove underline */
+    margin: 0 10px; /* Space between links */
+    font-weight: bold;
+}
+
+.footer-links a:hover {
+    color: #007bff; /* Blue color on hover */
+}
+/* Ensure the <a> tag takes the full width and height */
+    .category-card-link {
+    display: block;
+    text-decoration: none;  /* Remove underline from <a> tag */
+}
+
+.category-card {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd; /* Optional: Add border for styling */
+    background-color:#be9869; /* Optional: Add background color */
+}
+
+.category-card img {
+    width: 100%;
+    height: auto;  /* Maintain aspect ratio */
+    object-fit: cover; /* Ensure image covers the area */
+}
+
+.category-card h3 {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+
+
+    </style>
+</head>
+
+<body>
+    <!-- Full Cover Background Image -->
+     <div class="hero_area">
+        <!-- Header (Navbar) with Coffee Brown Shade -->
+        <header class="header_section" style="position: absolute; top: 0; left: 0; right: 0; z-index: 2;">
+            <div class="container-fluid p-0">
+                <nav class="navbar navbar-expand-lg" style="background-color:#0d0302; color: white;">
+                    <a class="navbar-brand" href="{% url 'core:index' %}"></a>
+
+                        <img src="{% static 'images/dlogo.png' %}" alt="CUPCRAZE Logo" class="img-fluid logo">
+                    </a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ml-auto">
+                            {% if request.user.is_authenticated %}
+                                <!-- Show Logout for logged-in users -->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'logout' %}" style="color: white;">Logout</a>
+                                </li>
+                            {% else %}
+                                <!-- Show Login and Register for guests -->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'login' %}" style="color: white;">Login</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'register' %}" style="color: white;">Register</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                        
+                    </div>
+                    
+                  
+                        <div class="user_option d-flex align-items-center">
+                            <a href="{% url 'profile' %}" class="user_link"><i class="fa fa-user"></i></a>
+                            <a href="{% url 'core:cart' %}" style="color: white; padding-left: 10px;">
+                                <i class="fa fa-shopping-cart"></i>
+                            </a>
+                            <a href="{% url 'home:wishlist' %}" class="wishlist_link"><i class="fa fa-heart"></i></a>
+
+                            <a href="{% url 'core:search' %}?q={{ query }}" class="search-link">
+                                <i class="fa fa-search"></i>
+                            </a>
+                              
+                              
+                            
+                               
+                        </div>
+                    </div>
+                </nav>
+
+                    <div class="hero_text">
+                       <h2 class="hero_heading">Discover the World of Coffee & Tea!</h2>
+                       <p class="hero_paragraph">Explore our curated collection of premium mugs, brewing kits, and accessories!</p>
+                       <a href= "{% url 'register' %}" class="btn btn-primary btn-lg hero_button">Start Shopping</a>
+                    </div>
+            </div>
+    </div>
+
+        </header>
+
+        <!-- Hero Section Text Over the Background -->
+       
+
+
+ <div class="coffee-banner">
+    <div class="banner-content">
+        <h1>Fresh Brewed Offer!</h1>
+        <p>
+            Sip and save! Get flat <span class="highlight"> 20% OFF</span> on All Cups and Mugs!!
+        </p>
+    </div>
+</div>
+
+
+    
+    <main>
+        
+        <section class="categories-section">
+            <h2>Shop by Categories</h2>
+            <div class="categories">
+                {% for category in categories %}
+                <a href="{% url 'core:category_detail' category.id %}" class="category-card-link">
+                        <div class="category-card">
+                            {% if category.image %}
+                                <img src="{{ category.image.url }}" alt="{{ category.category_name }}">
+                            {% else %}
+                                <img src="{% static 'ecommerce/images/category.png' %}" alt="Category">
+                            {% endif %}
+                            <h3>{{ category.category_name }}</h3>
+                        </div>
+                    </a>
+                {% empty %}
+                    <p>No categories available at the moment.</p>
+                {% endfor %}
+            </div>
+        </section>
+        
+        
+        <section class="featured-products-section">
+            <h2>Featured Products</h2>
+            <div class="featured-products">
+                {% for product in featured_products %}
+                    <div class="product-card">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        <h3>{{ product.name }}</h3>
+                        <p>{{ product.description }}</p>
+                        <p>Price: ₹{{ product.price }}</p>
+                    </div>
+                {% empty %}
+                    <p>No featured products available.</p>
+                {% endfor %}
+            </div>
+        </section>
+        
+    </main>
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 CUPCRAZE. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a> | 
+                <a href="#">Terms of Service</a> | 
+                <a href="#">Contact Us</a>
+            </div>
+   </div>
+    </footer>
+    

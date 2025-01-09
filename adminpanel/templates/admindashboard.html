@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Admin Dashboard for managing products, users, and orders.">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js Library -->
+    <style>
+        /* Reset and General Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: space-around;
+            background-color: #343a40;
+            padding: 1rem;
+            border-radius: 5px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #f8f9fa;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            background-color: #17a2b8;
+            color: #fff;
+            border-radius: 5px;
+        }
+
+        /* Overview Section */
+        .overview-section {
+            margin-top: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .overview-card {
+            background: #e9ecef;
+            padding: 1.5rem;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .overview-card h3 {
+            font-size: 1.25rem;
+            color: #495057;
+        }
+
+        .overview-card p {
+            font-size: 1rem;
+            color: #6c757d;
+            font-weight: 400;
+        }
+
+        /* Graph Section */
+        .graph-section {
+            margin-top: 2rem;
+        }
+
+        .graph-container {
+            margin: 1rem 0;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <h1>Admin Dashboard</h1>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="{% url 'adminpanel:user_management' %}" aria-label="Manage Users">Manage Users</a></li>
+                <li><a href="{% url 'adminpanel:product_dashboard' %}" aria-label="Product Dashboard">Product Dashboard</a></li>
+                <li><a href="{% url 'adminpanel:add_product' %}" aria-label="Add New Product">Add Product</a></li>
+                <li><a href="{% url 'adminpanel:category_list' %}" aria-label="View Category List">Category List</a></li>
+                <li><a href="{% url 'adminpanel:admin_order' %}" aria-label="View Category List">Orders</a></li>
+                <li><a href="{% url 'adminpanel:coupon_list' %}" aria-label="View Category List">Coupons</a></li>
+                <li><a href="{% url 'adminpanel:banner' %}" aria-label="View Category List">banner</a></li>
+
+
+
+            </ul>
+        </nav>
+
+        <!-- Overview Section -->
+        <section class="overview-section">
+            <div class="overview-card">
+                <h3>Total Users</h3>
+                <p>3</p>
+            </div>
+            <div class="overview-card">
+                <h3>Products</h3>
+                <p>28</p>
+            </div>
+            <div class="overview-card">
+                <h3>Orders</h3>
+                <p>10</p>
+            </div>
+            <div class="overview-card">
+                <h3>Categories</h3>
+                <p>4</p>
+            </div>
+        </section>
+
+        <!-- Graph Section -->
+        <section class="graph-section">
+            <h2>Analytics</h2>
+            <div class="graph-container">
+                <canvas id="userChart"></canvas>
+            </div>
+            <div class="graph-container">
+                <canvas id="productChart"></canvas>
+            </div>
+        </section>
+    </div>
+
+    <!-- Add JavaScript Here -->
+    <script>
+        // Fetch data from the Django view
+        fetch("{% url 'adminpanel:get_dashboard_data' %}")
+            .then(response => response.json())
+            .then(data => {
+                // Update the total counts
+                document.querySelector('.overview-card:nth-child(1) p').textContent = data.total_users;
+                document.querySelector('.overview-card:nth-child(2) p').textContent = data.total_products;
+                document.querySelector('.overview-card:nth-child(3) p').textContent = data.total_orders;  // Replace with actual order data
+                document.querySelector('.overview-card:nth-child(4) p').textContent = data.total_categories;
+
+                // Update the User Growth Chart
+                const ctx1 = document.getElementById('userChart').getContext('2d');
+                const userChart = new Chart(ctx1, {
+                    type: 'line',
+                    data: {
+                        labels: data.user_growth_labels, // From backend
+                        datasets: [{
+                            label: 'User Growth',
+                            data: data.user_growth,
+                            borderColor: '#17a2b8',
+                            backgroundColor: 'rgba(23, 162, 184, 0.2)',
+                            borderWidth: 2
+                        }]
+                    }
+                });
+
+                // Update the Product Sales Chart
+                const ctx2 = document.getElementById('productChart').getContext('2d');
+                const productChart = new Chart(ctx2, {
+                    type: 'bar',
+                    data: {
+                        labels: data.product_names,  // Replace with actual product names from backend
+                        datasets: [{
+                            label: 'Sales',
+                            data: data.product_sales,
+                            backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545']
+                        }]
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching dashboard data:', error);
+            });
+    </script>
+</body>
+</html>

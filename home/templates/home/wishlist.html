@@ -1,0 +1,98 @@
+{% load static %}
+{% block content %}
+
+<style>
+    /* Coffee-themed styling */
+    body {
+        color: #5d4037; /* Coffee brown text color */
+        background: url('{% static 'images/backgr2.png' %}') no-repeat center center;
+        background-size: cover;
+    }
+    .container-fluid {
+        background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    h1.text-center {
+        color: #3e2723; /* Heading color */
+        font-family: 'Georgia', serif;
+    }
+    .product-row {
+        display: flex; /* Arrange products in a row */
+        flex-wrap: nowrap; /* Prevent wrapping to next line */
+        gap: 20px; /* Add space between cards */
+        overflow-x: auto; /* Enable horizontal scrolling if needed */
+        padding: 10px;
+    }
+    .card {
+        background-color: #fffaf0; /* Card background */
+        border-radius: 10px;
+        border: 1px solid #b49774;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        width: 250px; /* Fixed width for cards */
+        flex: 0 0 auto; /* Prevent card shrinkage */
+    }
+    .card-img-top {
+        height: 200px; /* Fixed height for images */
+        object-fit: cover; /* Ensures image maintains proportions */
+    }
+    .card-body {
+        text-align: center;
+    }
+    .card-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #3e2723;
+        margin-bottom: 5px;
+    }
+    .price {
+        color: #6d4c41;
+        font-size: 16px;
+    }
+    .remove-btn, .add-to-cart-btn {
+        background-color: #8d6e63;
+        color: white;
+        text-decoration: none;
+        padding: 5px 15px;
+        border-radius: 5px;
+        display: inline-block;
+        margin: 5px; /* Space between buttons */
+    }
+    .remove-btn:hover, .add-to-cart-btn:hover {
+        background-color: #6d4c41;
+    }
+</style>
+
+<div class="container-fluid mt-2">
+    <h1 class="text-center mb-4">Your Wishlist</h1>
+    <div class="product-row">
+        {% for item in wishlist_items %}
+            <!-- Product Card -->
+            <div class="card shadow-sm">
+                {% if item.product.image %}
+                    <a href="{% url 'core:product_detail' item.product.id %}">
+                        <img class="card-img-top" src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                    </a>
+                {% else %}
+                    <img class="card-img-top" src="{% static 'images/default.jpg' %}" alt="Default product image">
+                {% endif %}
+                <div class="card-body">
+                    <h6 class="card-title">{{ item.product.name }}</h6>
+                    <p class="price">Price: ₹{{ item.product.price }}</p>
+                    <a href="{% url 'home:remove_from_wishlist' item.product.id %}" class="remove-btn">Remove</a>
+                    <a href="{% url 'core:add_to_cart' item.product.id %}" class="add-to-cart-btn">Add to Cart</a>
+                </div>
+            </div>
+        {% empty %}
+            <!-- No Products Found Message -->
+            <div class="text-center col-12">
+                <h4 class="text-muted mt-3">Your wishlist is empty.</h4>
+                <p>Start adding products to your wishlist!</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

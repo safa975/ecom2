@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f3ece1; /* Coffee cream background */
+            color: #5c4033; /* Coffee brown text */
+            margin: 0;
+            padding: 0;
+        }
+        h2 {
+            text-align: center;
+            color: #3e2723; /* Dark roast color */
+            padding: 20px 0;
+            font-family: 'Lucida Handwriting', cursive;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin: 0 auto;
+            padding: 20px;
+            max-width: 800px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background-color: #fff7e6; /* Light coffee background */
+        }
+        th, td {
+            border: 1px solid #d6c2b5; /* Coffee cream border */
+            padding: 12px 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #795548; /* Medium roast header */
+            color: #ffffff;
+        }
+        tr:nth-child(even) {
+            background-color: #f0e5d8; /* Light coffee stripes */
+        }
+        tr:hover {
+            background-color: #d7ccc8; /* Coffee cream hover */
+        }
+        a {
+            color: #795548; /* Medium roast links */
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            color: #3e2723; /* Dark roast hover */
+        }
+        p {
+            text-align: center;
+            color: #5c4033; /* Coffee brown text */
+        }
+        @media (max-width: 768px) {
+            table {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Your Orders</h2>
+    <div class="table-container">
+        {% if orders %}
+        <p>Orders fetched successfully!</p>
+        <ul>
+            {% for order in orders %}
+            <li>
+                Order ID: {{ order.id }}, Date: {{ order.created_at|date:"d M, Y H:i" }}, Amount: ₹{{ order.total_price }}, Status: {{ order.get_status_display }}, Payment Method: {{ order.payment_method }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>You have no orders yet.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

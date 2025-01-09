@@ -1,0 +1,148 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category: {{ category.category_name }}</title>
+    
+    <!-- Inline CSS for simplicity -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #be9869;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .product-card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .product-name {
+            font-size: 1.2em;
+            margin-top: 10px;
+            color: #333;
+        }
+
+        .product-price {
+            color: #007bff;
+            font-size: 1.1em;
+            margin-top: 5px;
+        }
+
+        .product-card a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .pagination {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .pagination-link {
+            text-decoration: none;
+            color: #007bff;
+            margin: 0 10px;
+        }
+
+        .pagination-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Category: {{ category.category_name }}</h1>
+    </header>
+
+    <main>
+        <section>
+            <h2>Products in {{ category.category_name }}</h2>
+            
+            {% if products %}
+                <div class="product-grid">
+                    {% for product in products %}
+                        <div class="product-card">
+                            <a href="{% url 'core:product_detail' product.id %}">
+
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                                {% else %}
+                                    <img src="{% static 'images/default_image.jpg' %}" alt="Default Image" class="product-image">
+                                {% endif %}
+                                <h3 class="product-name">{{ product.name }}</h3>
+                                <p>Price: ₹{{ product.price }}</p>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="pagination">
+                    {% if products.has_previous %}
+                        <a href="?page={{ products.previous_page_number }}" class="pagination-link">Previous</a>
+                    {% endif %}
+                    <span>Page {{ products.number }} of {{ products.paginator.num_pages }}</span>
+                    {% if products.has_next %}
+                        <a href="?page={{ products.next_page_number }}" class="pagination-link">Next</a>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p>No products found in this category.</p>
+            {% endif %}
+        </section>
+    </main>
+
+    
+</body>
+</html>

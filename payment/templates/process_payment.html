@@ -1,0 +1,124 @@
+<!-- payment/process_payment.html -->
+{% load static %} 
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<style>
+    body {
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        background: url('{% static 'images/backgr2.png' %}') no-repeat center center;
+        color: #555;
+        margin: 0;
+        padding: 0;
+        background-size: cover; 
+
+    }
+
+    h2 {
+        text-align: center;
+        font-size: 26px;
+        color: #333;
+        margin-top: 60px;
+        font-weight: 600;
+    }
+
+    p {
+        text-align: center;
+        font-size: 18px;
+        color: #777;
+        margin: 20px 0;
+    }
+
+    #pay-btn {
+        display: block;
+        margin: 30px auto;
+        padding: 16px 40px;
+        background-color: #1abc9c;
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    #pay-btn:hover {
+        background-color: #16a085;
+        transform: scale(1.05);
+    }
+
+    .container {
+        max-width: 500px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .order-info {
+        margin-bottom: 20px;
+    }
+
+    .order-info p {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .logo img {
+        max-width: 150px;
+        margin-bottom: 30px;
+    }
+
+    .footer-text {
+        margin-top: 40px;
+        font-size: 14px;
+        color: #aaa;
+    }
+</style>
+
+<div class="container">
+    
+    <h2>Complete Payment for Order #{{ order.id }}</h2>
+    <div class="order-info">
+        <p>Total Amount: ₹{{ order.total_price }}</p>
+    </div>
+
+    <button id="pay-btn" class="btn btn-success">Proceed to Pay</button>
+
+    <div class="footer-text">
+        <p>Thank you for shopping with us at CupCraze!</p>
+    </div>
+</div>
+
+<script>
+    var options = {
+        "key": "{{ razorpay_key }}",
+        "amount": "{{ order.total_price|floatformat:2 }}",
+        "currency": "INR",
+        "name": "CupCraze",
+        "description": "Order Payment",
+        "order_id": "{{ razorpay_order_id }}",
+        "handler": function (response){
+            alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+            window.location.href = "{% url 'payment:payment_success' order.id %}";
+        },
+        "prefill": {
+            "name": "{{ order.user.username }}",
+            "email": "{{ order.user.email }}"
+        },
+        "theme": {
+            "color": "#1abc9c"
+        }
+    };
+
+    var rzp1 = new Razorpay(options);
+    document.getElementById('pay-btn').onclick = function(e){
+        rzp1.open();
+        e.preventDefault();
+    }
+</script>

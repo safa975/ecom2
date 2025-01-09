@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    {% load static %} <!-- Load static files -->
+    <style>
+        /* Background image for the entire page */
+        body {
+            background: url('{% static "images/backgr2.png" %}') no-repeat center center;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Container to center the content vertically and horizontally */
+        .content-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 0 15px;
+        }
+
+        /* Form styling */
+        .search-form {
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .search-form input {
+            border-radius: 20px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+            width: 100%;
+        }
+
+        .search-form button {
+            border-radius: 20px;
+            padding: 12px 20px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .search-form button:hover {
+            background-color: #5a6268;
+        }
+
+        .search-form input::placeholder {
+            color: #6c757d;
+        }
+
+        /* Optional text styling */
+        .hero-text {
+            font-size: 2rem;
+            color: rgb(202, 171, 125);
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        /* Styling for product results */
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .product-item {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .product-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .product-item h5 {
+            margin-top: 10px;
+        }
+
+        .product-item p {
+            font-size: 0.9rem;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="content-container">
+        <div class="search-form">
+            <!-- Only keep the hero-text in the upper portion -->
+            <div class="hero-text">
+                <h1>Welcome to CupCraze</h1>
+                <p>Find the best coffee and tea accessories!</p>
+            </div>
+
+            <!-- Search Form -->
+            <form method="GET" action="{% url 'core:search' %}" class="d-flex">
+                <input type="text" name="q" class="form-control" placeholder="Search products..." value="{{ query }}">
+                <button type="submit" class="btn btn-outline-dark">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Display Search Results -->
+    <div class="container mt-4">
+        <h3>Search Results</h3>
+
+        {% if results %}
+        <div class="product-list">
+            {% for product in results %}
+            <div class="product-item">
+                <!-- Product Image -->
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% else %}
+                <img src="{% static 'images/default-product.png' %}" alt="Default Image">
+                {% endif %}
+                <!-- Product Name and Description -->
+                <h5>{{ product.name }}</h5>
+                <p>{{ product.description }}</p>
+                <a href="{% url 'core:product_detail' product.id %}" class="btn btn-outline-dark">View Details</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>No products found matching your search.</p>
+        {% endif %}
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
