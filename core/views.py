@@ -78,7 +78,6 @@ def remove_from_cart(request, cart_item_id):
     except Cart.DoesNotExist:
         messages.error(request, "Could not find the item in your cart.")
     return redirect('core:cart')
-
 @login_required
 def checkout(request):
     user_addresses = Address.objects.filter(user=request.user)  # Get user addresses
@@ -88,29 +87,31 @@ def checkout(request):
         messages.warning(request, "Your cart is empty.")
         return redirect('core:cart')
 
+    # Get the total price and discounted total
     total_price = sum(item.product.price * item.quantity for item in cart_items)
-    print("before post")
+    discounted_total = request.session.get('new_total', total_price)  # Use total_price if no discount applied
+
+    print(f"Discounted Total in Session (checkout): {discounted_total}")
 
     if request.method == "POST":
-        
         name = request.POST.get('name')
-        address_id = request.POST.get('address')  
+        address_id = request.POST.get('address')
         city = request.POST.get('city')
-        state = request.POST.get('state')  
+        state = request.POST.get('state')
         country = request.POST.get('country')
-        postal_code = request.POST.get('zipcode')  
-        payment_method = request.POST.get('payment_method')  
+        postal_code = request.POST.get('zipcode')
+        payment_method = request.POST.get('payment_method')
 
         if address_id:
             address = get_object_or_404(Address, id=address_id, user=request.user)
-            street_address = address.street  
-            city = address.city  
-            state = address.state  
+            street_address = address.street
+            city = address.city
+            state = address.state
             postal_code = address.zipcode
         else:
-            street_address = request.POST.get('address')  
+            street_address = request.POST.get('address')
 
-    
+        # Use the discounted total for the order
         order = Order.objects.create(
             user=request.user,
             name=name,
@@ -118,7 +119,7 @@ def checkout(request):
             city=city,
             country=country,
             postal_code=postal_code,
-            total_price=total_price
+            total_price=discounted_total  # Save discounted total
         )
 
         for cart_item in cart_items:
@@ -129,24 +130,23 @@ def checkout(request):
                 price=cart_item.product.price
             )
 
-        
-        print (payment_method)
+        print(payment_method)
 
         if payment_method == "cod":
             print("inside cod")
-            
             cart_items.delete()
-
             return redirect('payment:order_confirmation', order_id=order.id)
         else:
             return redirect(reverse('payment:process_payment', args=[order.id]))
-        
-    
+
     return render(request, 'core/checkout.html', {
         'user_addresses': user_addresses,
         'cart_items': cart_items,
         'total_price': total_price,
+        'discounted_total': discounted_total,  # Pass discounted total to the template
     })
+
+
 from adminpanel.models import Banner
 
 def index(request):
@@ -180,6 +180,7 @@ def category_detail(request, category_id):
     return render(request, 'core/category_detail.html', {
         'category': category,
         'products': products,
+
     })
 
 def product_detail(request, product_id):
@@ -203,49 +204,63 @@ def search(request):
 def contact_us(request):
     return render(request, 'core/contact_us.html')
 
-from .models import Coupon
+from .models import Coupon, Cart  # Ensure Cart and Coupon are correctly imported
+from django.contrib import messages
+from django.shortcuts import redirect
 
 # Utility function to calculate the cart total
 def calculate_cart_total(cart):
-    total = sum(item['price'] * item['quantity'] for item in cart)
+    try:
+        # Calculate total by accessing the product's price and multiplying by quantity
+        total = sum(item.product.price * item.quantity for item in cart)
+    except (AttributeError, TypeError, ValueError) as e:
+        print(f"Error calculating cart total: {e}")
+        total = 0  # Default to 0 in case of error
     return total
 
 # View to apply a coupon
 def apply_coupon(request):
     if request.method == "POST":
         coupon_code = request.POST.get('coupon_code', '').strip()
-        cart = Cart.objects.filter(user=request.user)
+        cart = Cart.objects.filter(user=request.user)  # Fetch cart items for the user
         print("hello")
         print(f"Coupon Code: {coupon_code}")
         print(f"Cart: {cart}")
 
-        if not cart:
+        if not cart.exists():  # Check if the cart is empty
             messages.error(request, "Your cart is empty.")
             print("Cart is empty.")
             return redirect('core:cart')
 
+        # Calculate the total cart price
         total = calculate_cart_total(cart)
         print(f"Cart Total: {total}")
 
         try:
+            # Find the coupon and validate it
             coupon = Coupon.objects.get(code=coupon_code, is_active=True)
             print(f"Coupon Found: {coupon.code}")
 
-            if not coupon.is_valid():
+            if not coupon.is_valid():  # Assuming `is_valid` is a method in the Coupon model
                 messages.error(request, "This coupon is no longer valid.")
                 print("Coupon is not valid.")
                 return redirect('core:cart')
 
+            # Calculate discount and new total
             discount_amount = (total * coupon.discount_amount) / 100
-            discount_amount = min(discount_amount, total)
+            discount_amount = min(discount_amount, total)  # Ensure discount doesn't exceed total
             new_total = total - discount_amount
 
             print(f"Discount Amount: {discount_amount}")
             print(f"New Total: {new_total}")
 
-            request.session['discount'] = float(discount_amount)
-            request.session['new_total'] = float(new_total)
-            request.session['cart_total'] = float(new_total)
+            # Store discount details in session
+            request.session['discount'] = round(float(discount_amount), 2)
+            request.session['new_total'] = round(float(new_total), 2)
+            request.session['cart_total'] = round(float(new_total), 2)
+
+            print(f"Discounted Total in Session: {request.session.get('new_total')}")
+
 
             messages.success(request, f"Coupon '{coupon_code}' applied successfully!")
         except Coupon.DoesNotExist:

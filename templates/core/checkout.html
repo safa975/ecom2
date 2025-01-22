@@ -231,7 +231,13 @@
                     {% endfor %}
                 </ul>
                 <div class="total">
-                    Total: ₹{{ total_price|floatformat:2 }}
+                    <p>Original Total: ₹{{ total_price }}</p>
+                    {% if total_price != discounted_total %}
+                        <p>Discounted Total: ₹{{ discounted_total }}</p>
+                    {% else %}
+                        <p>Total: ₹{{ total_price }}</p>
+                    {% endif %}
+                
                 </div>
             </div>
         </div>
